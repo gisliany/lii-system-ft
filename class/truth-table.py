@@ -2,18 +2,39 @@ class TruthTable:
     def __init__(self, inputs, outputs):
         self.__input_variables = inputs
         self.__output_variables = outputs
+        self.__inputs = []
+        self.__outputs = []
 
         inputs_number = len(self.__input_variables)
-        self.__inputs = []
         for i in range(2**inputs_number):
-            binary = (inputs_number - len(bin(i)[2:]))*'0' + bin(i)[2:]
+            binary = (inputs_number - len(bin(i)[2:]))*'0' + bin(i)[2:] #binary number of the input
             self.__inputs.append(binary)
 
+    def analyze(self):
+        inputs_number = len(self.__input_variables)
 
-    #def __analyze__(self, priorities):
+        for row in range(2**inputs_number):
+            # The first internal loop calculates the total power provided by the supplies
+            total_power_supplied = 0
+            for col in range(inputs_number):
+                total_power_supplied += (int(self.__inputs[row][col])*(-1) + 1)*self.__input_variables[col]['power']
+
+            # The second internal loop calculates the outputs of the truth table. It verifies if the total
+            # power supplied is enough to all charges.
+            power_consumed = 0
+            self.__outputs.append('')
+            for col in range(inputs_number):
+                power_consumed += self.__output_variables[col]['power']
+
+                if (total_power_supplied - power_consumed < 0):
+                    self.__outputs[row] += '1'
+                else:
+                    self.__outputs[row] += '0'
+
 
 #main
 
+# the charges'll be sorted by their priorities
 potencias = {
     'supply': [
         {'id': 'F1', 'power': 35000},
@@ -31,12 +52,6 @@ potencias = {
     ]
 }
 
-priority = [
-    {'id': 'C1', 'priority': 0},
-    {'id': 'C2', 'priority': 1},
-    {'id': 'C3', 'priority': 2},
-    {'id': 'C4', 'priority': 3},
-    {'id': 'C5', 'priority': 4}
-]
-
 x = TruthTable(potencias['supply'], potencias['charge'])
+x.analyze()
+print x._TruthTable__outputs
