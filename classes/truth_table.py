@@ -71,7 +71,7 @@ potencias = {
 
 x = TruthTable(potencias['supply'], potencias['charge'])
 x.analyze()
-print x.getOutputExpressions()[1]
+print x.getOutputExpressions()[0]
 
-y = QuineMcCluskey(x.getOutputExpressions()[1])
+y = QuineMcCluskey(x.getOutputExpressions()[0])
 y.resolve()
