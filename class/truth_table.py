@@ -6,12 +6,14 @@ class TruthTable:
         self.__outputs = []
 
         inputs_number = len(self.__input_variables)
+
         for i in range(2**inputs_number):
             binary = (inputs_number - len(bin(i)[2:]))*'0' + bin(i)[2:] #binary number of the input
             self.__inputs.append(binary)
 
     def analyze(self):
         inputs_number = len(self.__input_variables)
+        outputs_number = len(self.__output_variables)
 
         for row in range(2**inputs_number):
             # The first internal loop calculates the total power provided by the supplies
@@ -23,13 +25,26 @@ class TruthTable:
             # power supplied is enough to all charges.
             power_consumed = 0
             self.__outputs.append('')
-            for col in range(inputs_number):
+            for col in range(outputs_number):
                 power_consumed += self.__output_variables[col]['power']
 
                 if (total_power_supplied - power_consumed < 0):
                     self.__outputs[row] += '1'
                 else:
                     self.__outputs[row] += '0'
+
+    def getOutputExpressions(self):
+        expressions = []
+
+        for col in range(len(self.__output_variables)):
+            exp = []
+            for row in range(2**len(self.__input_variables)):
+                if self.__outputs[row][col] == '1':
+                    exp.append(self.__inputs[row])
+
+            expressions.append(exp)
+
+        return expressions
 
 
 #main
@@ -54,4 +69,4 @@ potencias = {
 
 x = TruthTable(potencias['supply'], potencias['charge'])
 x.analyze()
-print x._TruthTable__outputs
+print x.getOutputExpressions()
