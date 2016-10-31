@@ -49,6 +49,7 @@ class TruthTable:
 
         return expressions
 
+#-----------------------------------------------------------------------------
 #main
 
 # the charges'll be sorted by their priorities
@@ -71,7 +72,10 @@ potencias = {
 
 x = TruthTable(potencias['supply'], potencias['charge'])
 x.analyze()
-print x.getOutputExpressions()[0]
+print x.getOutputExpressions()[1]
 
-y = QuineMcCluskey(x.getOutputExpressions()[0])
+y = QuineMcCluskey(x.getOutputExpressions()[1])
+print "\n\n"
 y.resolve()
+
+print y.get_expression()
