@@ -75,7 +75,5 @@ x.analyze()
 print x.getOutputExpressions()[1]
 
 y = QuineMcCluskey(x.getOutputExpressions()[1])
-print "\n\n"
 y.resolve()
-
-print y.get_expression()
+print y.get_prime_implicants()
