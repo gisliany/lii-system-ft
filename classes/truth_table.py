@@ -70,6 +70,28 @@ potencias = {
     ]
 }
 
+topology = {
+    'S': ['T1'],
+    'T1': ['S', 'L'],
+    'T2': ['L', 'J1'],
+    'L': ['T1', 'T2'],
+    'J1': ['T2', 'J2', 'C4'],
+    'J2': ['J1', 'J3', 'F5', 'C1'],
+    'J3': ['J2', 'J4', 'F1', 'F3', 'C2'],
+    'J4': ['J3', 'J5', 'C5',],
+    'J5': ['J4', 'F2', 'F4', 'C3'],
+    'F1': ['J3'],
+    'F2': ['J5'],
+    'F3': ['J3'],
+    'F4': ['J5'],
+    'F5': ['J2'],
+    'C1': ['J2'],
+    'C2': ['J3'],
+    'C3': ['J5'],
+    'C4': ['J1'],
+    'C5': ['J4']
+}
+
 x = TruthTable(potencias['supply'], potencias['charge'])
 x.analyze()
 print x.getOutputExpressions()[1]
