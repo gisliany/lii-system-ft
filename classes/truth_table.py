@@ -1,4 +1,5 @@
 from qmccluskey import QuineMcCluskey
+from dfs import DFS
 
 class TruthTable:
 
@@ -99,3 +100,7 @@ print x.getOutputExpressions()[1]
 y = QuineMcCluskey(x.getOutputExpressions()[1])
 y.resolve()
 print y.get_prime_implicants()
+
+z = DFS('F2', 'C5', topology)
+z.execute()
+print z.getPaths()
