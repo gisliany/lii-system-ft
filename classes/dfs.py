@@ -8,15 +8,18 @@ class DFS:
         self.__visited = [source]
         self.__paths = []
 
+    def getPaths(self):
+        return self.__paths
+
     def execute(self):
-        nodes = self.__topology[visited[-1]] #getting adjacents nodes of the last node visited
+        nodes = self.__topology[self.__visited[-1]] #getting adjacents nodes of the last node visited
 
         for node in nodes:
-            if node in visited:
+            if node in self.__visited:
                 continue
-
-            if node == self.__target:
-                visited.append(node)
-                self.__paths.append(visited)
-                visited.pop()
-                break
+            elif node == self.__target:
+                self.__paths.append(self.__visited[:])
+            else:
+                self.__visited.append(node)
+                self.execute()
+                self.__visited.pop()
