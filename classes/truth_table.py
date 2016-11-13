@@ -1,9 +1,18 @@
-from qmccluskey import QuineMcCluskey
-from dfs import DFS
-
 class TruthTable:
+    '''
+    TruthTable class
+        This class is used to evaluate the output expressions of the charges. It's important that the charges are sorted by
+        their priorities.
+
+    Attributes:
+        __input_variables: a list with all the supplies of the Smart Grid (id and power informations)
+        __output_variables: a list with all the charges of the Smart Grid (id and power informations)
+        __inputs: a list with all possible binary inputs
+        __outputs: a list with all binary outputs
+    '''
 
     def __init__(self, inputs, outputs):
+        ''' This constructor initializes the class attributes. It fills the inputs according to number of supplies (input variables) '''
         self.__input_variables = inputs
         self.__output_variables = outputs
         self.__inputs = []
@@ -12,10 +21,11 @@ class TruthTable:
         inputs_number = len(self.__input_variables)
 
         for i in range(2**inputs_number):
-            binary = (inputs_number - len(bin(i)[2:]))*'0' + bin(i)[2:] #binary number of the input
+            binary = (inputs_number - len(bin(i)[2:]))*'0' + bin(i)[2:] # Binary number of the input
             self.__inputs.append(binary)
 
     def analyze(self):
+        ''' analyze public method resolves the truth table and it fills the 'outputs' attribute '''
         inputs_number = len(self.__input_variables)
         outputs_number = len(self.__output_variables)
 
@@ -38,6 +48,7 @@ class TruthTable:
                     self.__outputs[row] += '0'
 
     def getOutputExpressions(self):
+        ''' getOutputExpressions public method returns all the output expressions of the charges '''
         expressions = []
 
         for col in range(len(self.__output_variables)):
@@ -49,58 +60,3 @@ class TruthTable:
             expressions.append(exp)
 
         return expressions
-
-#-----------------------------------------------------------------------------
-#main
-
-# the charges'll be sorted by their priorities
-potencias = {
-    'supply': [
-        {'id': 'F1', 'power': 35000},
-        {'id': 'F2', 'power': 25000},
-        {'id': 'F3', 'power': 4000},
-        {'id': 'F4', 'power': 3000},
-        {'id': 'F5', 'power': 5500}
-    ],
-    'charge': [
-        {'id': 'C1', 'power': 19200},
-        {'id': 'C2', 'power': 19200},
-        {'id': 'C3', 'power': 8800},
-        {'id': 'C4', 'power': 5700},
-        {'id': 'C5', 'power': 2700}
-    ]
-}
-
-topology = {
-    'S': ['T1'],
-    'T1': ['S', 'L'],
-    'T2': ['L', 'J1'],
-    'L': ['T1', 'T2'],
-    'J1': ['T2', 'J2', 'C4'],
-    'J2': ['J1', 'J3', 'F5', 'C1'],
-    'J3': ['J2', 'J4', 'F1', 'F3', 'C2'],
-    'J4': ['J3', 'J5', 'C5',],
-    'J5': ['J4', 'F2', 'F4', 'C3'],
-    'F1': ['J3'],
-    'F2': ['J5'],
-    'F3': ['J3'],
-    'F4': ['J5'],
-    'F5': ['J2'],
-    'C1': ['J2'],
-    'C2': ['J3'],
-    'C3': ['J5'],
-    'C4': ['J1'],
-    'C5': ['J4']
-}
-
-x = TruthTable(potencias['supply'], potencias['charge'])
-x.analyze()
-print x.getOutputExpressions()[1]
-
-y = QuineMcCluskey(x.getOutputExpressions()[1])
-y.resolve()
-print y.get_prime_implicants()
-
-z = DFS('F2', 'C5', topology)
-z.execute()
-print z.getPaths()
