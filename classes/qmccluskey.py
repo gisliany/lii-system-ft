@@ -1,10 +1,22 @@
 class QuineMcCluskey:
+    '''
+    QuineMcCluskey class
+        This class is used for minimization of boolean expressions.
+
+    Attributes:
+        __expression: a list with the binary terms of the expression
+        __prime_implicants: a list with all essential prime implicants
+    '''
 
     def __init__(self, expression):
+        ''' This constructor initializes the class attributes. '''
         self.__expression = expression
         self.__prime_implicants = []
 
-    def __group_by_ones(self):
+    def __groupByOnes(self):
+        ''' __groupByOnes private method groups the miniterms of the expression by the number of ones.
+            This method returns a dictionary whose indexes are the number of ones.
+        '''
         groups = {}
         sorted_groups = {}
         terms_number = len(self.__expression)
@@ -25,19 +37,25 @@ class QuineMcCluskey:
 
         return sorted_groups
 
-    def __init_marks(self, groups):
+    def __initMarks(self, groups):
+        ''' __initMarks private method associates to each miniterm a flag. Firstly all the flags are False. If the flag is used its
+            value becomes True. Otherwise, it is held like False. This means that the term with False flag associated is a essential
+            prime implicant.
+        '''
         marks = {}
         for key, value in groups.iteritems():
             marks[key] = len(value)*[False]
 
         return marks
 
-    def get_prime_implicants(self): # mudar para property
+    def getPrimeImplicants(self):
+        ''' getPrimeImplicants public method returns the essential prime implicants. '''
         return self.__prime_implicants
 
     def resolve(self):
-        groups = self.__group_by_ones()
-        marks = self.__init_marks(groups)
+        ''' resolve public method applies the Quine-McCluskey method and it finds the essential prime implicants. '''
+        groups = self.__groupByOnes()
+        marks = self.__initMarks(groups)
         term_len = len(self.__expression[0])
         miniterms = []
         execute_again = False
