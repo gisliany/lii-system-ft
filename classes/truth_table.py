@@ -49,7 +49,7 @@ class TruthTable:
 
     def getOutputExpressions(self):
         ''' getOutputExpressions public method returns all the output expressions of the charges '''
-        expressions = []
+        expressions = {}
 
         for col in range(len(self.__output_variables)):
             exp = []
@@ -57,6 +57,7 @@ class TruthTable:
                 if self.__outputs[row][col] == '1':
                     exp.append(self.__inputs[row])
 
-            expressions.append(exp)
+            expressions[self.__output_variables[col]['id']] = exp
+            #expressions.append(exp)
 
         return expressions
