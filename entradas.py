@@ -1,6 +1,7 @@
 from classes.truth_table import TruthTable
 from classes.qmccluskey import QuineMcCluskey
 from classes.dfs import DFS
+from classes.converter import Converter
 
 # inputs
 
@@ -45,25 +46,25 @@ topology = {
 }
 
 rates = [
-    {'id': 'S', 'rate': 0},
-    {'id': 'T1', 'rate': 0.00000114},
-    {'id': 'T2', 'rate': 0.00000171},
-    {'id': 'L', 'rate': 0.000104},
-    {'id': 'J1', 'rate': 0.0000114},
-    {'id': 'J2', 'rate': 0.0000114},
-    {'id': 'J3', 'rate': 0.0000114},
-    {'id': 'J4', 'rate': 0.0000114},
-    {'id': 'J5', 'rate': 0.0000114},
-    {'id': 'F1', 'rate': 0.0000114},
-    {'id': 'F2', 'rate': 0.0000114},
-    {'id': 'F3', 'rate': 0.00000761},
-    {'id': 'F4', 'rate': 0.00000761},
-    {'id': 'F5', 'rate': 0.0000143}
+    {'id': 'S', 'rate': [0]},
+    {'id': 'T1', 'rate': [0.00000114]},
+    {'id': 'T2', 'rate': [0.00000171]},
+    {'id': 'L', 'rate': [0.000104]},
+    {'id': 'J1', 'rate': [0.0000114]},
+    {'id': 'J2', 'rate': [0.0000114]},
+    {'id': 'J3', 'rate': [0.0000114]},
+    {'id': 'J4', 'rate': [0.0000114]},
+    {'id': 'J5', 'rate': [0.0000114]},
+    {'id': 'F1', 'rate': [0.0000114]},
+    {'id': 'F2', 'rate': [0.0000114]},
+    {'id': 'F3', 'rate': [0.00000761]},
+    {'id': 'F4', 'rate': [0.00000761]},
+    {'id': 'F5', 'rate': [0.0000143]}
 ]
 
 distribution = "Failure Rate"
 
-evauation_metrics = {
+evaluation_metrics = {
     'Reliability': [0, 100000, 20000],
     'MTTF': []
 }
@@ -74,15 +75,18 @@ failure_condition = [
 
 # main
 
+# Truth Table
 truth_table = TruthTable(potencias['supply'], potencias['charge'])
 truth_table.analyze()
 expressions = truth_table.getOutputExpressions()
 
+# Quine MCcluskey
 for charge, exp in expressions.iteritems():
     qm = QuineMcCluskey(exp)
     qm.resolve()
     expressions[charge] = qm.getPrimeImplicants()
 
+# DFS
 final_expressions = {}
 for charge, exp in expressions.iteritems():
     final_expressions[charge] = []
@@ -99,16 +103,8 @@ for charge, exp in expressions.iteritems():
                 term_and += dfs.getPaths()
         final_expressions[charge].append(term_and)
 
-print final_expressions
+# print final_expressions
 
-
-
-
-'''
-qm = QuineMcCluskey(res.getOutputExpressions()[2])
-qm.resolve()
-print qm.getPrimeImplicants()
-
-dfs = DFS('F1', 'C3', topology)
-dfs.execute()
-print dfs.getPaths()'''
+# Converter
+# converter = Converter(final_expressions, distribution, rates, evaluation_metrics, failure_condition)
+# print converter.prepareCommand()
