@@ -58,6 +58,5 @@ class TruthTable:
                     exp.append(self.__inputs[row])
 
             expressions[self.__output_variables[col]['id']] = exp
-            #expressions.append(exp)
 
         return expressions
