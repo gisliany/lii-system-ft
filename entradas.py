@@ -46,7 +46,6 @@ topology = {
 }
 
 rates = [
-    {'id': 'S', 'rate': [0]},
     {'id': 'T1', 'rate': [0.00000114]},
     {'id': 'T2', 'rate': [0.00000171]},
     {'id': 'L', 'rate': [0.000104]},
@@ -103,8 +102,9 @@ for charge, exp in expressions.iteritems():
                 term_and += dfs.getPaths()
         final_expressions[charge].append(term_and)
 
-# print final_expressions
+#print final_expressions
 
 # Converter
-# converter = Converter(final_expressions, distribution, rates, evaluation_metrics, failure_condition)
-# print converter.prepareCommand()
+converter = Converter(final_expressions, distribution, rates, evaluation_metrics, failure_condition)
+converter.prepareCommand()
+print converter._Converter__subtrees
