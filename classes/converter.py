@@ -68,6 +68,8 @@ class Converter:
             else:
                 self.__subtrees[charge] = or_items[0]
 
+        # Iterating over the failure condition
+
         return self.__command
 
 
