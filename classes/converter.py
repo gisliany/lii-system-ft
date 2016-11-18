@@ -34,7 +34,7 @@ class Converter:
         return self.__command
 
         # Iterating over the expression dictionary to define the fault tree struct
-        
+
 
 
     def initSharpe(self):
