@@ -46,7 +46,6 @@ topology = {
 }
 
 rates = [
-    {'id': 'S', 'rate': [0]},
     {'id': 'T1', 'rate': [0.00000114]},
     {'id': 'T2', 'rate': [0.00000171]},
     {'id': 'L', 'rate': [0.000104]},
@@ -65,12 +64,12 @@ rates = [
 distribution = "Failure Rate"
 
 evaluation_metrics = {
-    'Reliability': [0, 100000, 20000],
+    #'Reliability': [0, 100000, 20000],
     'MTTF': []
 }
 
 failure_condition = [
-    {'gate': 'kofn', 'name': 'gate1', 'k': 1, 'n': 5, 'inputs': ['C1', 'C2', 'C3', 'C4', 'C5']}
+    {'gate': 'kofn', 'name': 'gate1', 'k': 5, 'n': 5, 'inputs': ['C1', 'C2', 'C3', 'C4', 'C5']}
 ]
 
 # main
@@ -103,8 +102,9 @@ for charge, exp in expressions.iteritems():
                 term_and += dfs.getPaths()
         final_expressions[charge].append(term_and)
 
-# print final_expressions
+#print final_expressions
 
 # Converter
-# converter = Converter(final_expressions, distribution, rates, evaluation_metrics, failure_condition)
-# print converter.prepareCommand()
+converter = Converter(final_expressions, distribution, rates, evaluation_metrics, failure_condition)
+converter.prepareCommand()
+converter.initSharpe()
