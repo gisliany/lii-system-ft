@@ -12,9 +12,17 @@ class Converter:
         self.__subtrees = {}
         self.__command = 'format 8\nfactor on\n\nftree ft_sg\n\n'
 
-    def __isEventRepeated(self):
-        #avaliar condicao de falha e expressao booleana
-        pass
+    def __isEventRepeated(self, event):
+        number = 0
+        for row_condition in self.__condition:
+            for charge in row_condition['inputs']:
+                for list_i in self.__expressions[charge]:
+                    for row in list_i:
+                        for col in row:
+                            number += col.count(event)
+                            if number > 1:
+                                return 'repeat'
+        return 'basic'
 
     def __getDistributionFunctionSharpe(self):
         if self.__distribution == "Steady-State Component Unavailability":
@@ -27,8 +35,17 @@ class Converter:
     def __getMetricFunctionSharpe(self):
         functions = []
         for metric, parameters in self.__metrics.iteritems():
+            result = ''
+
             if metric == 'MTTF':
-                functions.append('mean(ft_sg)')
+                functions.append('expr mean(ft_sg)')
+            elif metric == 'Reliability':
+                if len(parameters) > 1:
+                    result = 'loop t,' + str(parameters[0]) + ',' + str(parameters[1]) + ',' + str(parameters[2])
+                    result += '\nexpr 1-tvalue(t; ft_sg)'
+                else:
+                    result = 'expr 1-tvalue(' + str(parameters[0]) + '; ft_sg)'
+                functions.append(result)
 
         return functions
 
@@ -43,8 +60,7 @@ class Converter:
 
         # Iterating over the rates list and declaring the basic/repeat events
         for node in self.__rates:
-            #substituir repeat por metodo que verifica se evento eh basico ou repetido
-            self.__command += 'repeat ' + node['id'] + ' ' + self.__getDistributionFunctionSharpe() + '('
+            self.__command += self.__isEventRepeated(node['id']) + ' ' + node['id'] + ' ' + self.__getDistributionFunctionSharpe() + '('
             for r in node['rate']:
                 self.__command += str(r) + ', '
             self.__command = self.__command[:-2] + ')\n'
@@ -86,10 +102,11 @@ class Converter:
                 self.__command += ' ' + self.__subtrees[charge]
 
         self.__command += '\n\n' + 'end'
-        for function in self.__getMetricFunctionSharpe():
-            self.__command += '\n' + 'expr ' + function
 
-        self.__command += '\n\n' + 'end'
+        # Iterating over the evaluation metrics to get results
+        for function in self.__getMetricFunctionSharpe():
+            self.__command += '\n' + function + '\nend'
+
         return self.__command
 
 
