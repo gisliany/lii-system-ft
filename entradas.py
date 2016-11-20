@@ -64,12 +64,12 @@ rates = [
 distribution = "Failure Rate"
 
 evaluation_metrics = {
-    #'Reliability': [0, 100000, 20000],
+    'Reliability': [0, 100000, 10000],
     'MTTF': []
 }
 
 failure_condition = [
-    {'gate': 'kofn', 'name': 'gate1', 'k': 5, 'n': 5, 'inputs': ['C1', 'C2', 'C3', 'C4', 'C5']}
+    {'gate': 'kofn', 'name': 'gate1', 'k': 1, 'n': 5, 'inputs': ['C1', 'C2', 'C3', 'C4', 'C5']}
 ]
 
 # main
