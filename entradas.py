@@ -65,7 +65,14 @@ distribution = "Failure Rate"
 
 evaluation_metrics = {
     'Reliability': [0, 100000, 10000],
-    'MTTF': []
+    'MTTF': [],
+    'Birnbaum Importance F1': [10000, 'F1'],
+    'Birnbaum Importance F2': [10000, 'F2'],
+    'Birnbaum Importance F3': [10000, 'F3'],
+    'Birnbaum Importance F4': [10000, 'F4'],
+    'Birnbaum Importance F5': [10000, 'F5'],
+    'Birnbaum Importance T1': [10000, 'T1'],
+    'Birnbaum Importance T2': [10000, 'T2']
 }
 
 failure_condition = [
@@ -90,7 +97,7 @@ final_expressions = {}
 for charge, exp in expressions.iteritems():
     final_expressions[charge] = []
     for term in exp:
-        #lembrar de tratar para muitas subestacoes
+        # lembrar de tratar para muitas subestacoes
         dfs = DFS('S', charge, topology)
         dfs.execute()
         # lembrar de tratar para muitos caminhos
@@ -106,5 +113,7 @@ for charge, exp in expressions.iteritems():
 
 # Converter
 converter = Converter(final_expressions, distribution, rates, evaluation_metrics, failure_condition)
-converter.prepareCommand()
+txt = open('file.txt', 'w')
+txt.write(converter.prepareCommand())
+txt.close()
 converter.initSharpe()
