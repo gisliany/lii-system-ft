@@ -113,7 +113,5 @@ for charge, exp in expressions.iteritems():
 
 # Converter
 converter = Converter(final_expressions, distribution, rates, evaluation_metrics, failure_condition)
-txt = open('file.txt', 'w')
-txt.write(converter.prepareCommand())
-txt.close()
+converter.prepareCommand()
 converter.initSharpe()
