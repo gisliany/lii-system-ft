@@ -65,9 +65,9 @@ class Converter:
             elif metric == 'Unavailability' or metric == 'Unreliability':
                 if len(parameters) > 1:
                     result = 'loop t,' + str(parameters[0]) + ',' + str(parameters[1]) + ',' + str(parameters[2])
-                    result += '\nexpr tvalue(t; ft_sg)\nend'
+                    result += '\nexpr tvalue(t;ft_sg)\nend'
                 else:
-                    result = 'expr tvalue(' + str(parameters[0]) + '; ft_sg)'
+                    result = 'expr tvalue(' + str(parameters[0]) + ';ft_sg)'
                 functions.append(result)
             elif metric == 'Availability' or metric == 'Reliability':
                 if len(parameters) > 1:
@@ -162,9 +162,14 @@ class Converter:
         for function in self.__getMetricFunctionSharpe():
             self.__command += '\n' + function + '\n'
         self.__command += '\n\n' + 'end'
-        return self.__command
 
     def initSharpe(self):
         exe = subprocess.Popen(["start", "/B", "C:\Sharpe-Gui\sharpe\sharpe"], stdout=subprocess.PIPE, stdin=subprocess.PIPE, stderr=subprocess.STDOUT, shell=True)
         result = exe.communicate(input=self.__command)[0]
-        print result
+        result = result[707:-3].split('\n')
+
+        list_results = []
+        for r in result:
+            if r != '\r' and r.find('--------') == -1:
+                list_results.append(r.strip())
+        print list_results
