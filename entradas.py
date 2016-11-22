@@ -63,6 +63,7 @@ rates = [
 
 distribution = "Failure Rate"
 
+# The first and maybe second and third parameters are associated with time
 evaluation_metrics = {
     'Reliability': [0, 100000, 10000],
     'MTTF': [],
