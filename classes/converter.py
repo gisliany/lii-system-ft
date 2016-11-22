@@ -11,6 +11,7 @@ class Converter:
 
         self.__subtrees = {}
         self.__command = 'format 8\nfactor on\n\nftree ft_sg\n\n'
+        self.__result = {}
 
     def __isEventRepeated(self, event):
         number = 0
@@ -50,59 +51,53 @@ class Converter:
         elif self.__distribution == 'Binomial Distribution':
             return 'binomial'
 
-    def __getMetricFunctionSharpe(self):
-        functions = []
-        for metric, parameters in self.__metrics.iteritems():
-            result = ''
-            if metric == 'Steady-State Unavailability' or metric == 'Probability of Occurence of the Top Event ':
-                functions.append('expr sysprob(ft_sg)')
-            elif metric == 'Steady-State Availability':
-                functions.append('expr 1-sysprob(ft_sg)')
-            elif metric == 'Downtime':
-                functions.append('expr 60*8760*sysprob(ft_sg)')
-            elif metric == 'Cost of Downtime':
-                functions.append('expr ' + parameters[0] + '*60*8760*sysprob(ft_sg)')
-            elif metric == 'Unavailability' or metric == 'Unreliability':
-                if len(parameters) > 1:
-                    result = 'loop t,' + str(parameters[0]) + ',' + str(parameters[1]) + ',' + str(parameters[2])
-                    result += '\nexpr tvalue(t;ft_sg)\nend'
-                else:
-                    result = 'expr tvalue(' + str(parameters[0]) + ';ft_sg)'
-                functions.append(result)
-            elif metric == 'Availability' or metric == 'Reliability':
-                if len(parameters) > 1:
-                    result = 'loop t,' + str(parameters[0]) + ',' + str(parameters[1]) + ',' + str(parameters[2])
-                    result += '\nexpr 1-tvalue(t;ft_sg)\nend'
-                else:
-                    result = 'expr 1-tvalue(' + str(parameters[0]) + ';ft_sg)'
-                functions.append(result)
-            elif metric == 'MTTF':
-                functions.append('expr mean(ft_sg)')
-            elif metric == 'Variance':
-                functions.append('expr variance(ft_sg)')
-            elif metric.find('Birnbaum Importance') != -1:
-                if len(parameters) > 2:
-                    result = 'loop t,' + str(parameters[0]) + ',' + str(parameters[1]) + ',' + str(parameters[2])
-                    result += '\nexpr bimpt(t;ft_sg,' + parameters[3] + ')\nend'
-                else:
-                    result = 'expr bimpt(' + str(parameters[0]) + ';ft_sg,' + parameters[1] + ')'
-                functions.append(result)
-            elif metric.find('Criticality Importance') != -1:
-                if len(parameters) > 2:
-                    result = 'loop t,' + str(parameters[0]) + ',' + str(parameters[1]) + ',' + str(parameters[2])
-                    result += '\nexpr cimpt(t;ft_sg,' + parameters[3] + ')\nend'
-                else:
-                    result = 'expr cimpt(' + str(parameters[0]) + ';ft_sg, ' + parameters[1] + ')'
-                functions.append(result)
-            elif metric.find('Structural Importance') != -1:
-                if len(parameters) > 2:
-                    result = 'loop t,' + str(parameters[0]) + ',' + str(parameters[1]) + ',' + str(parameters[2])
-                    result += '\nexpr simpt(t;ft_sg,' + parameters[3] + ')\nend'
-                else:
-                    result = 'expr simpt(' + str(parameters[0]) + ';ft_sg, ' + parameters[1] + ')'
-                functions.append(result)
+    def __getMetricFunctionSharpe(self, metric, parameters):
+        function = ''
 
-        return functions
+        if metric == 'Steady-State Unavailability' or metric == 'Probability of Occurence of the Top Event ':
+            function = 'expr sysprob(ft_sg)'
+        elif metric == 'Steady-State Availability':
+            function = 'expr 1-sysprob(ft_sg)'
+        elif metric == 'Downtime':
+            function = 'expr 60*8760*sysprob(ft_sg)'
+        elif metric == 'Cost of Downtime':
+            functions = 'expr ' + parameters[0] + '*60*8760*sysprob(ft_sg)'
+        elif metric == 'Unavailability' or metric == 'Unreliability':
+            if len(parameters) > 1:
+                function = 'loop t,' + str(parameters[0]) + ',' + str(parameters[1]) + ',' + str(parameters[2])
+                function += '\nexpr tvalue(t;ft_sg)\nend'
+            else:
+                function = 'expr tvalue(' + str(parameters[0]) + ';ft_sg)'
+        elif metric == 'Availability' or metric == 'Reliability':
+            if len(parameters) > 1:
+                function = 'loop t,' + str(parameters[0]) + ',' + str(parameters[1]) + ',' + str(parameters[2])
+                function += '\nexpr 1-tvalue(t;ft_sg)\nend'
+            else:
+                function = 'expr 1-tvalue(' + str(parameters[0]) + ';ft_sg)'
+        elif metric == 'MTTF':
+            function = 'expr mean(ft_sg)'
+        elif metric == 'Variance':
+            function = 'expr variance(ft_sg)'
+        elif metric.find('Birnbaum Importance') != -1:
+            if len(parameters) > 2:
+                function = 'loop t,' + str(parameters[0]) + ',' + str(parameters[1]) + ',' + str(parameters[2])
+                function += '\nexpr bimpt(t;ft_sg,' + parameters[3] + ')\nend'
+            else:
+                function = 'expr bimpt(' + str(parameters[0]) + ';ft_sg,' + parameters[1] + ')'
+        elif metric.find('Criticality Importance') != -1:
+            if len(parameters) > 2:
+                function = 'loop t,' + str(parameters[0]) + ',' + str(parameters[1]) + ',' + str(parameters[2])
+                function += '\nexpr cimpt(t;ft_sg,' + parameters[3] + ')\nend'
+            else:
+                function = 'expr cimpt(' + str(parameters[0]) + ';ft_sg, ' + parameters[1] + ')'
+        elif metric.find('Structural Importance') != -1:
+            if len(parameters) > 2:
+                function = 'loop t,' + str(parameters[0]) + ',' + str(parameters[1]) + ',' + str(parameters[2])
+                function += '\nexpr simpt(t;ft_sg,' + parameters[3] + ')\nend'
+            else:
+                function = 'expr simpt(' + str(parameters[0]) + ';ft_sg, ' + parameters[1] + ')'
+
+        return function
 
     def __listToString(self, listUsed):
         string = ''
@@ -159,17 +154,39 @@ class Converter:
         self.__command += '\n\n' + 'end'
 
         # Iterating over the evaluation metrics to get results
-        for function in self.__getMetricFunctionSharpe():
-            self.__command += '\n' + function + '\n'
+        for metric in sorted(self.__metrics):
+            self.__command += '\n' + self.__getMetricFunctionSharpe(metric, self.__metrics[metric]) + '\n'
         self.__command += '\n\n' + 'end'
 
     def initSharpe(self):
         exe = subprocess.Popen(["start", "/B", "C:\Sharpe-Gui\sharpe\sharpe"], stdout=subprocess.PIPE, stdin=subprocess.PIPE, stderr=subprocess.STDOUT, shell=True)
         result = exe.communicate(input=self.__command)[0]
+
         result = result[707:-3].split('\n')
 
         list_results = []
         for r in result:
             if r != '\r' and r.find('--------') == -1:
                 list_results.append(r.strip())
-        print list_results
+
+        self.__result = {}
+        i = 0
+        for metric in sorted(self.__metrics):
+            parameters = self.__metrics[metric]
+            sharpe_code = self.__getMetricFunctionSharpe(metric, parameters)
+
+            self.__result[metric] = []
+            if len(parameters) > 2:
+                i += 1
+                sharpe_code = sharpe_code.split('\n')[1]
+                for x in range((parameters[1]/parameters[2] + 1)):
+                    string = (list_results[i].replace(sharpe_code[5:] + ':', '')).strip()
+                    self.__result[metric].append(float(string))
+                    if x != (parameters[1]/parameters[2] + 1):
+                        i += 2
+            else:
+                string = (list_results[i].replace(sharpe_code[5:] + ':', '')).strip()
+                self.__result[metric].append(float(string))
+                i += 1
+
+        print self.__result
