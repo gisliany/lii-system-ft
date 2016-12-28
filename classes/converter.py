@@ -106,6 +106,9 @@ class Converter:
 
         return string[:-1]
 
+    def getCommand(self):
+        return self.__command
+
     def prepareCommand(self):
 
         # Iterating over the rates list and declaring the basic/repeat events
@@ -164,7 +167,7 @@ class Converter:
         result = exe.communicate(input=self.__command)[0]
 
         result = result[707:-3].split('\n')
-
+        self.__result = {}
         list_results = []
         for r in result:
             if r != '\r' and r.find('--------') == -1:
