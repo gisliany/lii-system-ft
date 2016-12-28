@@ -1,18 +1,18 @@
 class TruthTable:
     '''
     TruthTable class
-        This class is used to evaluate the output expressions of the charges. It's important that the charges are sorted by
+        This class is used to evaluate the output expressions of the loads. It's important that the loads are sorted by
         their priorities.
 
     Attributes:
-        __input_variables: a list with all the supplies of the Smart Grid (id and power informations)
-        __output_variables: a list with all the charges of the Smart Grid (id and power informations)
+        __input_variables: a list with all the sources of the Smart Grid (id and power informations)
+        __output_variables: a list with all the loads of the Smart Grid (id and power informations)
         __inputs: a list with all possible binary inputs
         __outputs: a list with all binary outputs
     '''
 
     def __init__(self, inputs, outputs):
-        ''' This constructor initializes the class attributes. It fills the inputs according to number of supplies (input variables) '''
+        ''' This constructor initializes the class attributes. It fills the inputs according to number of sources (input variables) '''
         self.__input_variables = inputs
         self.__output_variables = outputs
         self.__inputs = []
@@ -30,13 +30,13 @@ class TruthTable:
         outputs_number = len(self.__output_variables)
 
         for row in range(2**inputs_number):
-            # The first internal loop calculates the total power provided by the supplies
+            # The first internal loop calculates the total power provided by the sources
             total_power_supplied = 0
             for col in range(inputs_number):
                 total_power_supplied += (int(self.__inputs[row][col])*(-1) + 1)*self.__input_variables[col]['power']
 
             # The second internal loop calculates the outputs of the truth table. It verifies if the total
-            # power supplied is enough to all charges.
+            # power supplied is enough to all loads.
             power_consumed = 0
             self.__outputs.append('')
             for col in range(outputs_number):
@@ -48,7 +48,7 @@ class TruthTable:
                     self.__outputs[row] += '0'
 
     def getOutputExpressions(self):
-        ''' getOutputExpressions public method returns all the output expressions of the charges '''
+        ''' getOutputExpressions public method returns all the output expressions of the loads '''
         expressions = {}
 
         for col in range(len(self.__output_variables)):

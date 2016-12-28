@@ -16,8 +16,8 @@ class Converter:
     def __isEventRepeated(self, event):
         number = 0
         for row_condition in self.__condition:
-            for charge in row_condition['inputs']:
-                for list_i in self.__expressions[charge]:
+            for load in row_condition['inputs']:
+                for list_i in self.__expressions[load]:
                     for row in list_i:
                         for col in row:
                             number += col.count(event)
@@ -116,31 +116,31 @@ class Converter:
             self.__command = self.__command[:-2] + ')\n'
 
         # Iterating over the expression dictionary to define the subtrees
-        for charge, expression in self.__expressions.iteritems():
+        for load, expression in self.__expressions.iteritems():
             or_items = []
             self.__command += '\n'
             for row_index, row in enumerate(expression):
                 and_items = []
                 for col_index, col in enumerate(row):
                     if len(col) > 1:
-                        gate_name = 'or_' + charge + '_' + str(row_index) + '_' + str(col_index)
+                        gate_name = 'or_' + load + '_' + str(row_index) + '_' + str(col_index)
                         self.__command += 'or ' + gate_name + ' ' + self.__listToString(col) + '\n'
                         and_items.append(gate_name)
                     else:
                         and_items.append(col[0])
 
                 if len(and_items) > 1:
-                    gate_name = 'and_' + charge + '_' + str(row_index)
+                    gate_name = 'and_' + load + '_' + str(row_index)
                     self.__command += 'and ' + gate_name + ' ' + self.__listToString(and_items) + '\n'
                     or_items.append(gate_name)
                 else:
                     or_items.append(and_items[0])
 
             if len(or_items) > 1:
-                self.__command += 'or or_' + charge + ' ' + self.__listToString(or_items) + '\n'
-                self.__subtrees[charge] = 'or_' + charge
+                self.__command += 'or or_' + load + ' ' + self.__listToString(or_items) + '\n'
+                self.__subtrees[load] = 'or_' + load
             else:
-                self.__subtrees[charge] = or_items[0]
+                self.__subtrees[load] = or_items[0]
 
         # Iterating over the failure condition
         for key, condition in enumerate(self.__condition):
@@ -148,17 +148,18 @@ class Converter:
             self.__command += condition['gate'] + ' ' + condition['name'] + ' '
             if condition['k'] > 0:
                 self.__command += str(condition['k']) + ', ' + str(condition['n']) + ','
-            for charge in condition['inputs']:
-                self.__command += ' ' + self.__subtrees[charge]
+            for load in condition['inputs']:
+                self.__command += ' ' + self.__subtrees[load]
 
         self.__command += '\n\n' + 'end'
 
         # Iterating over the evaluation metrics to get results
         for metric in sorted(self.__metrics):
             self.__command += '\n' + self.__getMetricFunctionSharpe(metric, self.__metrics[metric]) + '\n'
-        self.__command += '\n\n' + 'end'
+        self.__command += '\n' + 'end'
 
     def initSharpe(self):
+        print self.__command
         exe = subprocess.Popen(["start", "/B", "C:\Sharpe-Gui\sharpe\sharpe"], stdout=subprocess.PIPE, stdin=subprocess.PIPE, stderr=subprocess.STDOUT, shell=True)
         result = exe.communicate(input=self.__command)[0]
 
