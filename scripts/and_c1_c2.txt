@@ -1,0 +1,77 @@
+format 8
+factor on
+
+ftree ft_sg
+
+repeat T1 exp(1.14e-06)
+repeat T2 exp(1.71e-06)
+repeat N1 exp(0.000104)
+repeat J1 exp(1.14e-05)
+repeat J2 exp(1.14e-05)
+repeat J3 exp(1.14e-05)
+repeat J4 exp(1.14e-05)
+repeat J5 exp(1.14e-05)
+repeat S1 exp(1.14e-05)
+repeat S2 exp(1.14e-05)
+basic S3 exp(7.61e-06)
+basic S4 exp(7.61e-06)
+basic S5 exp(1.43e-05)
+
+or or_L4_0_0 T1 N1 T2 J1
+or or_L4_0_1 S1 J3 J2 J1
+and and_L4_0 or_L4_0_0 or_L4_0_1
+or or_L4_1_0 T1 N1 T2 J1
+or or_L4_1_1 S2 J5 J4 J3 J2 J1
+and and_L4_1 or_L4_1_0 or_L4_1_1
+or or_L4 and_L4_0 and_L4_1
+
+or or_L5_0_0 T1 N1 T2 J1 J2 J3 J4
+or or_L5_0_1 S1 J3 J4
+and and_L5_0 or_L5_0_0 or_L5_0_1
+or or_L5_1_0 T1 N1 T2 J1 J2 J3 J4
+or or_L5_1_1 S2 J5 J4
+and and_L5_1 or_L5_1_0 or_L5_1_1
+or or_L5 and_L5_0 and_L5_1
+
+or or_L2_0_0 T1 N1 T2 J1 J2 J3
+or or_L2_0_1 S1 J3
+and and_L2_0 or_L2_0_0 or_L2_0_1
+or or_L2_1_0 T1 N1 T2 J1 J2 J3
+or or_L2_1_1 S2 J5 J4 J3
+or or_L2_1_2 S3 J3
+or or_L2_1_3 S5 J2 J3
+and and_L2_1 or_L2_1_0 or_L2_1_1 or_L2_1_2 or_L2_1_3
+or or_L2 and_L2_0 and_L2_1
+
+or or_L3_0_0 T1 N1 T2 J1 J2 J3 J4 J5
+or or_L3_0_1 S1 J3 J4 J5
+and and_L3_0 or_L3_0_0 or_L3_0_1
+or or_L3_1_0 T1 N1 T2 J1 J2 J3 J4 J5
+or or_L3_1_1 S2 J5
+or or_L3_1_2 S3 J3 J4 J5
+and and_L3_1 or_L3_1_0 or_L3_1_1 or_L3_1_2
+or or_L3_2_0 T1 N1 T2 J1 J2 J3 J4 J5
+or or_L3_2_1 S2 J5
+or or_L3_2_2 S5 J2 J3 J4 J5
+and and_L3_2 or_L3_2_0 or_L3_2_1 or_L3_2_2
+or or_L3_3_0 T1 N1 T2 J1 J2 J3 J4 J5
+or or_L3_3_1 S2 J5
+or or_L3_3_2 S4 J5
+and and_L3_3 or_L3_3_0 or_L3_3_1 or_L3_3_2
+or or_L3 and_L3_0 and_L3_1 and_L3_2 and_L3_3
+
+or or_L1_0_0 T1 N1 T2 J1 J2
+or or_L1_0_1 S1 J3 J2
+or or_L1_0_2 S2 J5 J4 J3 J2
+and and_L1_0 or_L1_0_0 or_L1_0_1 or_L1_0_2
+
+and gate1  and_L1_0 or_L2
+
+end
+expr mean(ft_sg)
+
+loop t,0,100000,10000
+expr 1-tvalue(t;ft_sg)
+end
+
+end
