@@ -14,7 +14,7 @@ These instructions will get you a copy of the project up and run on your local m
 
 ### Installing SHARPE and choosing the approach
 
-Firstly, you need to get SHARPE Tool and make a copy of its folder in your disk C.
+Firstly, you need to get SHARPE Tool and make a copy of its folder in your C: disk.
 
 There are two ways to reproduce the results of the evaluation method for the Smart Grids:
 
